@@ -1,0 +1,36 @@
+\documentclass[12pt]{article}
+
+\usepackage{times}
+\usepackage{hyperref}
+\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
+\hypersetup{colorlinks, urlcolor={blue}}
+
+% revise margins
+\setlength{\headheight}{0.0in}
+\setlength{\topmargin}{0.0in}
+\setlength{\headsep}{0.0in}
+\setlength{\textheight}{8.65in}
+\setlength{\footskip}{0.35in}
+\setlength{\oddsidemargin}{0.0in}
+\setlength{\evensidemargin}{0.0in}
+\setlength{\textwidth}{6.5in}
+
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+\usepackage{Sweave}
+\begin{document}
+\input{knitr_example-concordance}
+
+{\sffamily \textbf{An example Knitr/R Markdown document}}
+
+\href{http://kbroman.org}{Karl W Broman}
+
+This is a portion of the ``\href{http://www.rqtl.org/rqtltour2.pdf}{A shorter tour of R/qtl}''
+tutorial, developed here in multiple formats to illustrate the use of knitr.
+This particular document is written with \href{http://www.latex-project.org}{LaTeX}.
+
+\begin{Schunk}
+\begin{Sinput}
+> opts_chunk$set(fig.width=12, fig.height=4, fig.path='RnwFigs/',
++                warning=FALSE, message=FALSE, tidy=FALSE)
