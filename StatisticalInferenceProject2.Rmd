@@ -1,0 +1,175 @@
+---
+title: "Statistical Inference Course Project Part 2 - Kevin O'Leary"
+geometry: tmargin=1cm, lmargin=1cm, rmargin=1cm, bmargin = 1.5cm
+output:
+  pdf_document:
+    fig_crop: no
+    fig_height: 3.55
+    fig_width: 6
+  html_document: default
+fontsize: 5pt
+---
+
+Now we're going to analyze the ToothGrowth data in the R datasets package which 
+concerns the length of odontoblasts (cells responsible for tooth growth) in 60 
+guinea pigs, each receiving one of three dose levels of Vitamin C (0.5, 1.0, and
+2.0 mg) with one of two delivery methods (orange juice or an aqueous solution of
+ascorbic acid).  
+
+**1. Load the ToothGrowth data and perform some basic exploratory data analyses** 
+
+```{r}
+library(datasets)
+str(ToothGrowth)
+```
+
+We can see that 'dose' is a numeric vector when in fact the contents can take
+only one of three levels. It is necessary then to convert this vector to a factor 
+vector.
+
+```{r}
+ToothGrowth$dose <- factor(ToothGrowth$dose)
+summary(ToothGrowth)
+```
+
+```{r echo=FALSE}
+options("scipen"=100) ##disable scientific notation
+```
+
+Let's take a graphical look at the data:
+
+```{r}
+library(ggplot2)
+
+ojsubset <- ToothGrowth[ToothGrowth$supp == "OJ",] ##subset data where supp = OJ
+orangejplot <- ggplot(ojsubset, aes(x=dose,y=len, fill=dose)) +
+    geom_boxplot() +
+    theme(plot.title = element_text(size = 10),
+         text = element_text(size = 9))+
+    coord_cartesian(ylim=c(0,35))+
+    labs(title='Tooth Length v Vitamin C Dosage by Orange Juice', x='Dose (mg)', y='Odont. Length (micron)')
+
+acidsubset <- ToothGrowth[ToothGrowth$supp == "VC",] ##subset data where supp = VC
+acidsubsetplot <- ggplot(acidsubset, aes(x= dose, y=len, fill= dose)) +
+    geom_boxplot() +
+    theme(plot.title = element_text(size = 10),
+         text = element_text(size = 9))+
+    coord_cartesian(ylim=c(0,35))+
+    labs(title='Tooth Length v Dosage of Vitamin C by Ascorbic Acid', x='Dose (mg)', y='Odont. Length (micron)')
+```
+
+```{r , fig.width = 4.1, fig.height = 3.3, echo=FALSE}
+orangejplot
+acidsubsetplot
+```
+
+**2. Provide a basic summary of the data.**
+
+The boxplots appear to show that orange juice delivery provides greater tooth 
+length at lower dosages only (0.5 and 1) than ascorbic acid. Increases in dosage
+however, results in increases in tooth length for either delivery method.
+
+**3. Use confidence intervals and hypothesis tests to compare tooth growth by supp and dose. **
+
+To compare tooth growth by supplement and dose we will use the `t.test` function 
+to determine if the two sets of data are significantly different to each other.
+
+The null hypothesis is that the means of both data sets are equal with the 
+alternative hypothesis being that the difference in tooth length is 
+statistically significant. The null hypothesis will be rejected if we find a 
+p-value of less than 0.05.
+
+Let's first subset the data further.
+
+```{r}
+acid05 <- acidsubset[acidsubset$dose==0.5,]
+acid10 <- acidsubset[acidsubset$dose==1.0,]
+acid20 <- acidsubset[acidsubset$dose==2.0,]
+oj05 <- ojsubset[ojsubset$dose==0.5,]
+oj10 <- ojsubset[ojsubset$dose==1.0,]
+oj20 <- ojsubset[ojsubset$dose==2.0,]
+```
+
+First we t-test the effect of supplement type on tooth length while holding 
+dosage constant. 
+
+```{r}
+# Perform t test on acidsubset vs ojsubset at 0.5mg dose
+t.05.acidoj <- t.test(len ~ supp, data=rbind(acid05,oj05), var.equal=FALSE)
+
+#1.0mg dose
+t.10.acidoj <- t.test(len ~ supp, data=rbind(acid10,oj10), var.equal=FALSE)
+
+#2.0mg dose
+t.20.acidoj <- t.test(len ~ supp, data=rbind(acid20,oj20), var.equal=FALSE)
+```
+
+```{r echo=FALSE}
+
+##make display table for data 
+a1 <- c("Ascorbic Acid and OJ","Ascorbic Acid and OJ","Ascorbic Acid and OJ")
+b1 <- c("0.5mg", "1.0mg", "2.0mg")
+c1 <- c(t.05.acidoj$p.value,t.10.acidoj$p.value,t.20.acidoj$p.value)
+d1 <- c(t.05.acidoj$conf.int[1],t.05.acidoj$conf.int[1],t.05.acidoj$conf.int[1])
+e1 <- c(t.05.acidoj$conf.int[2],t.10.acidoj$conf.int[2],t.20.acidoj$conf.int[2])
+
+resultsummary1 <- data.frame("supplements compared"=a1,
+                            "dose level"=b1,
+                            "p-value"=c1,
+                            "conf. int. (-)"=d1,
+                            "conf. int. (+)"=e1, check.names=F)
+
+library(knitr)
+
+kable(resultsummary1, digits = 7, caption = "Summary of Results")
+
+```
+
+Now we'll test the effect of dosages on tooth length:
+
+```{r}
+# Perform t test on 0.5mg vs 1.0mg, within each supplement
+t.acid.0510 <- t.test(len ~ dose, data=rbind(acid05,acid10), var.equal=TRUE)
+t.oj.0510 <- t.test(len ~ dose, data=rbind(oj05,oj10), var.equal=TRUE)
+
+# 1.0mg vs 2.0mg
+t.acid.1020 <- t.test(len ~ dose, data=rbind(acid10,acid20), var.equal=TRUE)
+t.oj.1020 <- t.test(len ~ dose, data=rbind(oj10,oj20), var.equal=TRUE)
+
+# 0.5mg vs 2.0mg
+t.acid.0520 <- t.test(len ~ dose, data=rbind(acid05,acid20), var.equal=TRUE)
+t.oj.0520 <- t.test(len ~ dose, data=rbind(oj05,oj20), var.equal=TRUE)
+```
+
+```{r echo=FALSE}
+
+##make display table for data 
+a <- c("0.5mg and 1.0mg"," 0.5mg and 1.0mg","1.0mg and 2.0mg","1.0mg and 2.0mg", "0.5mg and 2.0mg", "0.5mg and 2.0mg")
+b <- c("Acid", "OJ", "Acid", "OJ", "Acid", "OJ")
+c <- c(t.acid.0510$p.value,t.oj.0510$p.value,t.acid.1020$p.value,t.oj.1020$p.value,t.acid.0520$p.value,t.oj.0520$p.value)
+d <- c(t.acid.0510$conf.int[1],t.oj.0510$conf.int[1],t.acid.1020$conf.int[1],t.oj.1020$conf.int[1],t.acid.0520$conf.int[1],t.oj.0520$conf.int[1])
+e <- c(t.acid.0510$conf.int[2],t.oj.0510$conf.int[2],t.acid.1020$conf.int[2],t.oj.1020$conf.int[2],t.acid.0520$conf.int[2],t.oj.0520$conf.int[2])
+
+resultsummary <- data.frame("doses compared"=a,
+                    supplement=b,
+                    "p-value"=c,
+                    "conf. int. (-)"=d,
+                    "conf. int. (+)"=e, check.names=F)
+
+kable(resultsummary, digits = 7, caption = "Summary of Results")
+
+```
+
+**4. State your conclusions and the assumptions needed for your conclusions.**
+
+The analysis shows a direct connection between dosage and tooth growth.
+p-values for all tests were below threshold and confidence intervals do not 
+include zero, indicating that the increase in tooth growth when supplement 
+dose is increased is statistically significant.
+
+We see however, that the correlation between supplement type and tooth growth 
+diminishes at the highest dose. For 0.5mg and 1.0mg, p-values are below 
+threshold and the confidence interval does not include zero, indicating that the
+increase in tooth growth that's seen with orange juice vs ascorbic acid is 
+statistically significant. At 2.0mg, however, this discrepancy vanishes and our 
+null hypothesis at this level is accepted.
