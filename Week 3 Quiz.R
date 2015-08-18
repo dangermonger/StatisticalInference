@@ -14,11 +14,13 @@
 ##As the sample size is small, the mean and standard deviation of the 
 ##distribution will only be approximately standard normal.
 
-##Each element of the list is converted into a z-score, a dimensionless and 
-##idealised quantity, stripping the variation caused by the small sample size. 
+##Each element of the list is converted into a z-score, which converts the units
+##of the distribution into units of standard deviation, meaning the shape of 
+##the distribution is preserved as the distribution is scaled up later. This 
+##idealised quantity strips the variation caused by the small sample size. 
 ##This process (subtraction of the mean and division by standard deviation) is 
-##exactly reversed by multiplying by the sd and adding the mean, thereby 
-##reinstating the dimensions of the distribution by the chosen figures.
+##exactly reversed by multiplying by the standard deviation and adding the mean,
+##thereby reinstating the dimensions of the distribution by the chosen figures.
 
 ##A t-test is finally performed on the populated distribution.
 
