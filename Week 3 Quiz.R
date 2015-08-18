@@ -7,35 +7,26 @@
 ##distribution with a standard deviation of 1. A distribution having the 
 ##qualities N(0,1) is a standard normal distribution. Scaling a vector converts 
 ##each element into a z-score which tells us how many standard deviations a 
-##number is from the mean.
+##number is from the mean(0). Z-scores are normal random variables of a standard 
+##normal distribution.
 
-##The method below generates 9 normally distributed random variables.The list is
-##converted into a z-score, which tells us how far from mean(0) each element is.
-##
+##The method below generates 9 standard normally distributed random variables. 
+##As the sample size is small, the mean and standard deviation of the 
+##distribution will only be approximately standard normal.
 
-set.seed(1)
+##Each element of the list is converted into a z-score, a dimensionless and 
+##idealised quantity, stripping the variation caused by the small sample size. 
+##This process (subtraction of the mean and division by standard deviation) is 
+##exactly reversed by multiplying by the sd and adding the mean, thereby 
+##reinstating the dimensions of the distribution by the chosen figures.
 
-y <- 1100 + (30 *scale(rnorm(9)))
+##A t-test is finally performed on the populated distribution.
 
+mean = 1100
+sd = 30
+n = 9
 
-rnorm2 <- function(samplenumber,mean,sd) {mean+sd*scale(rnorm(samplenumber)) }
-x <- rnorm2(9,1100,30)
+distmake <- mean + (sd *scale(rnorm(n)))
 
-t.test(x, conf.level = 0.95) 
-  
-y <- 1100 + (30 *scale(rnorm(9)))
+t.test(distmake, conf.level = 0.95) 
 
-yx <- 1100 + 30 *scale(rnorm(9))
-
-pop <- scale(rnorm(3))
-
-scale(rnorm(3))
-
-
-y <- rnorm(3)
-y
-mean(y)
-sd(y)
-
-xy <- y - mean(y)
-xyz <- xy/sd(y)
