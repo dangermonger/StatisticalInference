@@ -1,3 +1,4 @@
+##-------------------------------Question 1-------------------------------------
 ##The function 'scale' will calculate the mean and standard deviation of the 
 ##entire vector, then "scale" each element by those values by subtracting
 ##the mean and dividing by the standard deviation. 
@@ -32,3 +33,50 @@ distmake <- mean + (sd *scale(rnorm(n)))
 
 t.test(distmake, conf.level = 0.95) 
 
+##-------------------------------Question 2-------------------------------------
+
+##A 95% confidence interval has two tails and since we're interested in the 
+##upper end we'll need to input the 0.975 quantile with the lower.tail=FALSE.
+##The degrees of freedom (df) for the t-distribution is equal to the sample size
+##minus 1.
+
+##The t-value is like the z score from above except that it is used for small
+##sample sizes and the t-distribution has taller tails. Taking the mean of the 
+##sample from a random variable again centres the distribution at zero and the 
+##result is divided by the sample standard deviation or the standard error of 
+##the mean, expressed as sd/sqrt(n).
+
+##standard deviation (population) = SD
+##SD/sqrt(samplesize) = standard error of the mean = sample SD = SE 
+##observation - mean of obs = meandiff
+##sample observation - mean of sample obs = samplemeandiff
+##(a/b = c/d) = (d/c = b/a)
+##(a/b = c/d) = (a = b(c/d))
+
+##z-score = meandiff/SD
+##t-value = samplemeandiff/SE
+##SE = samplemeandiff/t-value
+##SD = sqrt(samplesize)*(samplemeandiff)/t-value
+
+samplesize = 9
+samplemeandiff = -2
+
+tvalue <- qt(0.975, df=(samplesize-1), lower.tail = FALSE) ##critical t-value
+
+standardev = sqrt(samplesize)*(samplemeandiff)/tvalue
+
+##-------------------------------Question 4-------------------------------------
+
+NewSystem <- 3 + (sqrt(0.60) *scale(rnorm(10)))
+OldSystem <- 5 + (sqrt(0.68) *scale(rnorm(10)))
+
+t.test(NewSystem, OldSystem) 
+
+##-------------------------------Question 7-------------------------------------
+
+Treated <- -3 + (1.5 *scale(rnorm(9)))
+Placebo <- 1 + (1.8 *scale(rnorm(9)))
+
+t.test(Treated, Placebo, conf.level = 0.90) 
+
+##----------------------------------END-----------------------------------------
