@@ -173,3 +173,24 @@ threshold and the confidence interval does not include zero, indicating that the
 increase in tooth growth that's seen with orange juice vs ascorbic acid is 
 statistically significant. At 2.0mg, however, this discrepancy vanishes and our 
 null hypothesis at this level is accepted.
+
+---
+
+```{r}
+
+##EXAMPLE SUMMARY TABLE CODE - HIDDEN ABOVE FOR LAYOUT PURPOSES
+a1 <- c("Ascorbic Acid and OJ","Ascorbic Acid and OJ","Ascorbic Acid and OJ")
+b1 <- c("0.5mg", "1.0mg", "2.0mg")
+c1 <- c(t.05.acidoj$p.value,t.10.acidoj$p.value,t.20.acidoj$p.value)
+d1 <- c(t.05.acidoj$conf.int[1],t.05.acidoj$conf.int[1],t.05.acidoj$conf.int[1])
+e1 <- c(t.05.acidoj$conf.int[2],t.10.acidoj$conf.int[2],t.20.acidoj$conf.int[2])
+
+resultsummary1 <- data.frame("supplements compared"=a1,
+                            "dose level"=b1,
+                            "p-value"=c1,
+                            "conf. int. (-)"=d1,
+                            "conf. int. (+)"=e1, check.names=F)
+library(knitr)
+kable(resultsummary1, digits = 7, caption = "Summary of Results")
+
+```
