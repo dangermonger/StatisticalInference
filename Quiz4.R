@@ -159,16 +159,7 @@ Alternative hypothesis = sample observation is above the benchmark
 High P values: your data are likely with a true null. Accept null.
 Low P values: your data are unlikely with a true null. Reject null
 
-figures x 100 and rounded
-
-p (benchmark rate) = 1%
-p2 (incident rate) = 0.6% = centre of distribution
-SE of p = 0.2%
-
-p - p2 = 0.4%
-zscore of p = 0.4%/0.2% = 2 standard deviations
-
-ALternative method
+ALternative, much easier conceptually method
 
 ##Lambda (??) is the total number of events (k) divided by the number of units 
 ######(n) in the data (?? = k/n).
@@ -178,17 +169,8 @@ totaldays <- 1787
 lambda <- benchmarkrate * totaldays#Acceptable number of infections in 1787 days
 observed_infections <- 10
 #H0: That the observed data is under the expected rate. 
-#Probability of observing 10 or fewer infections under null:
-ppois(10,lambda)
 
-
-p = 1/100 
-p2 = 10/1787 
-
-p/p2
-
-
-
+ppois(10,lambda)#Probability of observing 10 or fewer infections under null
 
 ##-------------------------------Question 5-------------------------------------
 
