@@ -116,39 +116,13 @@ binom.test(Cokeno, TotalTrialNo, alternative = "greater")
 ##1,787 person days at risk. About what is the one sided P-value for the 
 ##relevant test of whether the hospital is *below* the standard?
 
-what is the p-value of whether the hospital is below the standard?
-
-##The standard deviation of the sample proportion, or standard error, can be 
-##approximated by the equation ??p = sqrt(p*(1 - p)/n) where..
-
-p = 1/100 ##Infection rate
-p2 = 10/1787 ##Infection rate in sample 
-n = 1787 ##Number of observations in the sample
-
-serror = sqrt(p*(1-p)/n) ##standard error of the sample proportion
-
-##Now that we have the standard error for this proportion we can perform a 
-##z-test which compares our two proportions. 
-
-##A z-test results in a z-score. In other words, we need to express the 
-##difference between the sample proportions in terms of standard errors.
-
-zscore = (p-p2)/serror
-
-##pnorm gives the cumulative probability of the z-score. 
-##lower.tail=FALSE returns the probability above the z-score.
-
-pnorm(zscore, lower.tail=FALSE)
-
-##In summary, what we've done is to convert the difference in rates into
-##units of standard error, which are called z-scores. We've then asked, what 
-##is the probability that we would obtain a result that is greater than the 
-##value of the Z-score, that is to say, a difference of more than 1.87 SE.
-##This is the p-value.
-
-0.03
-
 What is the P-value for whether the hospital is below the benchmark?
+
+If a hosptial recently had an infection rate above 1/100, what is the 
+probability of now having an infection rate of 0.6/100?
+
+In other words, how likely are we to see the observed rate or less in a 
+probability distribution of the benchmark?
 
 Null hypothesis = sample observation is below the benchmark
 Alternative hypothesis = sample observation is above the benchmark
@@ -159,17 +133,62 @@ Alternative hypothesis = sample observation is above the benchmark
 High P values: your data are likely with a true null. Accept null.
 Low P values: your data are unlikely with a true null. Reject null
 
-ALternative, much easier conceptually method
+##The standard deviation of the sample proportion can be approximated by the 
+##equation ??p = sqrt(P*(1 - P)/n) where..
+
+P = 1/100 ##Benchmark rate or population proportion
+p2 = 10/1787 ##Infection rate or sample proportion 
+n = 1787 ##Number of observations in the sample
+
+standev = sqrt(P*(1-P)/n) ##standard deviation of the sample proportion
+
+##We use the benchmark rate in this formula because, to use the proportion
+##terminology, the population proportion is known and we therefore don't have 
+##to estimate it with p-hat.
+
+##Let's visualise the distribution at this point. The mean of a sampling 
+##distribution is the population proportion.
+
+mean = P
+sd = standev
+n = 1787
+
+distmake <- mean + (sd *scale(rnorm(n)))
+hist(distmake)
+
+##Now that we have the standard deviation for this proportion we can perform a 
+##z-test which compares our two proportions. 
+
+##A z-test results in a z-score. In other words, we can now express the 
+##difference between the proportions in terms of standard deviations.
+
+zscore = (p2-P)/standev
+
+##pnorm gives the cumulative probability of the z-score. 
+
+pnorm(zscore)
+
+##In summary, what we've done is to convert the difference in rates into
+##units of standard deviation, which are called z-scores. We've then asked, what 
+##is the probability that we would obtain a result that is equal to or lower 
+##than 10/1787, if we assume that the observed rate is below the benchmark rate.
+##This is the p-value.
+
+0.03 or 3%
+
+ALternative method, much easier conceptually 
 
 ##Lambda (??) is the total number of events (k) divided by the number of units 
-######(n) in the data (?? = k/n).
+######(n) in the data (?? = k/n). In this case, multiplying by the rate 1/100 is 
+######the same as dividing by 100, 1787/100. Lambda is also the mean and 
+######variance of the distribution.
 
-benchmarkrate <- 1/100
 totaldays <- 1787
-lambda <- benchmarkrate * totaldays#Acceptable number of infections in 1787 days
+benchmarkrate <- 1/100
+lambda <- totaldays * benchmarkrate#Acceptable number of infections in 1787 days
 observed_infections <- 10
 #H0: That the observed data is under the expected rate. 
-
+#Ha: That the observed data is above the expected rate. 
 ppois(10,lambda)#Probability of observing 10 or fewer infections under null
 
 ##-------------------------------Question 5-------------------------------------
@@ -197,7 +216,7 @@ Less than 0.01
 ##Brain volumes for 9 men yielded a 90% confidence interval of 1,077 cc to 1,123
 ##cc. Would you reject in a two sided 5% hypothesis test of H0:??=1,078?
 
-No you wouldn't reject.
+##No you wouldn't reject.
 
 ##-------------------------------Question 7-------------------------------------
 
@@ -207,6 +226,15 @@ No you wouldn't reject.
 ##would be the power of the study for a 5% one sided test versus a null 
 ##hypothesis of no volume loss?
 
+n=100 #number of observations
+delta=0.01 #true difference in means
+sd=0.04
+sig.level = 0.05 #default Type I error probability
+
+power.t.test(n, delta, sd, type ="one.sample", alternative = "one.sided")$power
+
+0.7989855
+
 ##-------------------------------Question 8-------------------------------------
 
 ##Researchers would like to conduct a study of n healthy adults to detect a four
@@ -214,6 +242,11 @@ No you wouldn't reject.
 ##four year volume loss in this population is .04 mm3. About what would be the 
 ##value of n needded for 90% power of type one error rate of 5% one sided test 
 ##versus a null hypothesis of no volume loss?
+
+power.t.test(power=0.9, delta=0.01, sd=0.04, type ="one.sample", 
+             alt = "one.sided")$n
+
+138
 
 ##-------------------------------Question 9-------------------------------------
 
