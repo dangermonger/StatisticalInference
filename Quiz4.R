@@ -116,16 +116,14 @@ binom.test(Cokeno, TotalTrialNo, alternative = "greater")
 ##1,787 person days at risk. About what is the one sided P-value for the 
 ##relevant test of whether the hospital is *below* the standard?
 
-What is the P-value for whether the hospital is below the benchmark?
+If a hospital recently had an infection rate above 17.87/1787, what is the 
+probability of them now having an infection rate of 10/1787?
 
-If a hosptial recently had an infection rate above 1/100, what is the 
-probability of now having an infection rate of 0.6/100?
+In other words, we are looking for the probability of the observed score, or 
+less, in a probability distribution with a mean value of the standard.
 
-In other words, how likely are we to see the observed rate or less in a 
-probability distribution of the benchmark?
-
-Null hypothesis = sample observation is below the benchmark
-Alternative hypothesis = sample observation is above the benchmark
+H0: the mean of the probability distribution is equal to the standard
+Ha: the mean of the probability distribution is below the standard
 
 ##The p-value measures the likelihood of the observed effect if the null 
 ######hypothesis is true. 
@@ -168,13 +166,15 @@ zscore = (p2-P)/standev
 
 pnorm(zscore)
 
-##In summary, what we've done is to convert the difference in rates into
-##units of standard deviation, which are called z-scores. We've then asked, what 
-##is the probability that we would obtain a result that is equal to or lower 
-##than 10/1787, if we assume that the observed rate is below the benchmark rate.
-##This is the p-value.
+##In summary, what we've done is to create a distribution with a mean of the 
+##acceptable rate. We then compared the rates and converted the difference into
+##a z-score. Finally, we returned the cumulative probability of the observed 
+##difference.
 
 0.03 or 3%
+
+##The p-value is low so we must reject the null hypothesis and state that the 
+##observation is below the standard rate. 
 
 ALternative method, much easier conceptually 
 
@@ -187,8 +187,6 @@ totaldays <- 1787
 benchmarkrate <- 1/100
 lambda <- totaldays * benchmarkrate#Acceptable number of infections in 1787 days
 observed_infections <- 10
-#H0: That the observed data is under the expected rate. 
-#Ha: That the observed data is above the expected rate. 
 ppois(10,lambda)#Probability of observing 10 or fewer infections under null
 
 ##-------------------------------Question 5-------------------------------------
